@@ -17,9 +17,15 @@ mv -v hvbp_hcahps_05_28_2015.csv surveys_responses.csv
 #
 # Create the hdfs folder and move files there
 #
+
 hdfs dfs -mkdir /user/w205/hospital_compare
-hdfs dfs -put hospitals.csv /user/w205/hospital_compare
-hdfs dfs -put effective_care.csv /user/w205/hospital_compare
-hdfs dfs -put readmissions.csv /user/w205/hospital_compare
-hdfs dfs -put Measures.csv /user/w205/hospital_compare
-hdfs dfs -put surveys_responses.csv /user/w205/hospital_compare
+hdfs dfs -mkdir /user/w205/hospital_compare/hospitals
+hdfs dfs -mkdir /user/w205/hospital_compare/effective_care
+hdfs dfs -mkdir /user/w205/hospital_compare/readmissions
+hdfs dfs -mkdir /user/w205/hospital_compare/Measures
+hdfs dfs -mkdir /user/w205/hospital_compare/surveys_responses
+hdfs dfs -put hospitals.csv /user/w205/hospital_compare/hospitals
+hdfs dfs -put effective_care.csv /user/w205/hospital_compare/effective_care
+hdfs dfs -put readmissions.csv /user/w205/hospital_compare/readmissions
+hdfs dfs -put Measures.csv /user/w205/hospital_compare/Measures
+hdfs dfs -put surveys_responses.csv /user/w205/hospital_compare/surveys_responses
