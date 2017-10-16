@@ -3,7 +3,25 @@
 # must be run as w205 - "su - w205" prior to running this script
 
 unzip Hospital_Revised_Flatfiles.zip
-for name in *\ *.csv; do tail -n +2 "$name" > "${name// /}"; mv -v "$name" "$name".orig; done
+
+for name in *\ *.csv; do mv -v "$name" "${name// /}"; done
+for name in *.csv; do tail -n +2 "$name" > "${name}.tmp"; mv -v ${name}.tmp $name; done
+
+#
+# Remove any old files that existed
+#
+
+hdfs dfs -rm /user/w205/hospital_compare/hospitals/hospitals.csv
+hdfs dfs -rmdir /user/w205/hospital_compare/hospitals
+hdfs dfs -rm /user/w205/hospital_compare/Measures/Measures.csv
+hdfs dfs -rmdir /user/w205/hospital_compare/Measures
+hdfs dfs -rm /user/w205/hospital_compare/effective_care/effective_care.csv
+hdfs dfs -rmdir /user/w205/hospital_compare/effective_care
+hdfs dfs -rm /user/w205/hospital_compare/readmissions/readmissions.csv
+hdfs dfs -rmdir /user/w205/hospital_compare/readmissions
+hdfs dfs -rm /user/w205/hospital_compare/surveys_responses/surveys_responses.csv
+hdfs dfs -rmdir /user/w205/hospital_compare/surveys_responses
+hdfs dfs -rmdir /user/w205/hospital_compare
 
 #
 #rename the needed files
