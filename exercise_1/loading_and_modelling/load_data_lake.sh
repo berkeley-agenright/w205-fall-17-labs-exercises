@@ -26,6 +26,7 @@ hdfs dfs -rmdir /user/w205/hospital_compare
 #
 #rename the needed files
 #
+
 mv -v HospitalGeneralInformation.csv hospitals.csv
 mv -v TimelyandEffectiveCare-Hospital.csv effective_care.csv
 mv -v ReadmissionsandDeaths-Hospital.csv readmissions.csv
