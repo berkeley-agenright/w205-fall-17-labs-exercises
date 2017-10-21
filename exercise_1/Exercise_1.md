@@ -19,7 +19,6 @@ We performed this exercise using Hadoop 2.6 and Apache Spark 1.5 on linux (Cento
 | Family          | Type     | VCPUs | Memory (GiB) | Instance Storage | EBS Optimized Available | Network Performance | IPv6 Support |
 | --------------- | -------- | ----- | ------------ | ---------------- | ----------------------- | ------------------- | ------------ |
 | General Purpose | m1.large | 2     | 7.5          | 2x420            | Yes                     | Moderate           | No            |
-| --------------- | -------- | ----- | ------------ | ---------------- | ----------------------- | ------------------- | ------------ |
 
 ## Methodology
 
@@ -55,8 +54,8 @@ hospital had emergency services, Scores and sample-sizes in the effective_care a
 we generally inserted null into the final tables.
 - Tranforming the data to enable comparisons.  Here we needed to convert values such as "0 out of 9" into usable numerics for comparison.  This required a complex UDF, which exhausted our system
 resources.  The only workaround we found was to break the surveys_results table into three temporary tables and tranform each in turn then re-join the table.  Within the effective care table were also
-Scores that were both categorical and numeric, so we changed all scores to numerics for final processing.
+Scores that were both categorical and numeric, so we changed all scores to numerics for final processing.  We also add an indicator variable to readmissions to ensure quick comparison to the national average.
 - Creating ranges on the measures.  Many of the measures had different ranges in the effective_care and readmissions tables, so in hopes fo being able to normalize these data, we enriched the
 metrics table with a MinScore and MaxScore for each category that appeared in one of the other tables.
-
+- Creating appropriate data checks on the transformations.  We perform automated row count checking and foreign key validation.  For actual data validation, we'll perform ad-hoc queries.
 Our loading and modelling file is in the sub-folder [transforming](transforming)

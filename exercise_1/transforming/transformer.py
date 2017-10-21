@@ -116,6 +116,11 @@ def TransformReadmissions():
 	readmissions_revised = readmissions_revised.withColumn('Score', (when(readmissions_revised.Score == 'Not Available', lit(None)).otherwise(readmissions_revised.Score)).cast(DoubleType()))
 	readmissions_revised = readmissions_revised.withColumn('LowerEstimate', (when(readmissions_revised.LowerEstimate == 'Not Available', lit(None)).otherwise(readmissions_revised.LowerEstimate)).cast(DoubleType()))
 	readmissions_revised = readmissions_revised.withColumn('HigherEstimate', (when(readmissions_revised.HigherEstimate == 'Not Available', lit(None)).otherwise(readmissions_revised.HigherEstimate)).cast(DoubleType()))
+	readmissions_revised = readmissions_revised.withColumn('ComparedToNationalIndicator', (
+			when(readmissions_revised.ComparedToNational == 'Not Available', lit(None)).otherwise(
+			when(readmissions_revised.ComparedToNational == 'Number of Cases Too Small', lit(None)).otherwise(
+			when(readmissions_revised.ComparedToNational == 'Better than the National Rate', lit(1.0)).otherwise(
+			when(readmissions_revised.ComparedToNational == 'Worse than the National Rate', lit(-1.0)).otherwise(lit(0.0)))))).cast(DoubleType()))
 	readmissions_revised.saveAsTable('readmissions')
 	return
 	
@@ -199,8 +204,8 @@ def TransformSurveysResponses():
 	dimension_score.registerTempTable('dimension_score')
 
 	surveys_responses_revised = sqlContext.sql('SELECT CASE WHEN s.ProviderID = "330249" THEN "331316" ELSE s.ProviderID END as ProviderID,a.CommunicationWithNursesAchievementPoints,i.CommunicationWithNursesImprovementPoints,d.CommunicationWithNursesDimensionScore,a.CommunicationWithDoctorsAchievementPoints,i.CommunicationWithDoctorsImprovementPoints,d.CommunicationWithDoctorsDimensionScore,a.ResponsivenessOfHospitalStaffAchievementPoints,i.ResponsivenessOfHospitalStaffImprovementPoints,d.ResponsivenessOfHospitalStaffDimensionScore,a.PainManagementAchievementPoints,i.PainManagementImprovementPoints,d.PainManagementDimensionScore,a.CommunicationAboutMedicinesAchievementPoints,i.CommunicationAboutMedicinesImprovementPoints,d.CommunicationAboutMedicinesDimensionScore,a.CleanlinessandQuietnessOfHospitalEnvironmentAchievementPoints,i.CleanlinessandQuietnessOfHospitalEnvironmentImprovementPoints,d.CleanlinessandQuietnessOfHospitalEnvironmentDimensionScore,a.DischargeInformationAchievementPoints,i.DischargeInformationImprovementPoints,d.DischargeInformationDimensionScore,a.OverallRatingOfHospitalAchievementPoints,i.OverallRatingOfHospitalImprovementPoints,d.OverallRatingOfHospitalDimensionScore,s.HCAHPSBaseScore,s.HCAHPSConsistencyScore FROM surveys_responses_tmp s join achievement_points a on a.ProviderID = s.ProviderID join improvement_points i on i.ProviderID = s.ProviderID join dimension_score d on d.ProviderID = s.ProviderID')
-	surveys_responses_revised = surveys_responses_revised.withColumn('HCAHPSBaseScore', (when(readmissions_revised.HCAHPSBaseScore == 'Not Available', lit(None)).otherwise(surveys_responses_revised.HCAHPSBaseScore)).cast(DoubleType()))
-	surveys_responses_revised = surveys_responses_revised.withColumn('HCAHPSConsistencyScore', (when(readmissions_revised.HCAHPSConsistencyScore == 'Not Available', lit(None)).otherwise(surveys_responses_revised.HCAHPSConsistencyScore)).cast(DoubleType()))
+	surveys_responses_revised = surveys_responses_revised.withColumn('HCAHPSBaseScore', (when(surveys_responses_revised.HCAHPSBaseScore == 'Not Available', lit(None)).otherwise(surveys_responses_revised.HCAHPSBaseScore)).cast(DoubleType()))
+	surveys_responses_revised = surveys_responses_revised.withColumn('HCAHPSConsistencyScore', (when(surveys_responses_revised.HCAHPSConsistencyScore == 'Not Available', lit(None)).otherwise(surveys_responses_revised.HCAHPSConsistencyScore)).cast(DoubleType()))
 	surveys_responses_revised.saveAsTable('surveys_responses')
 	return
 
@@ -261,3 +266,4 @@ TransformSurveysResponses()
 # Finally, perform some sanity checks on the data
 CheckAllRowCounts()
 CheckForeignKeys()
+
