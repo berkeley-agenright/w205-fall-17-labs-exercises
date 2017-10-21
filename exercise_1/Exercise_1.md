@@ -16,10 +16,10 @@ were asked were:
 
 We performed this exercise using Hadoop 2.6 and Apache Spark 1.5 on linux (Centos 6.6).  The VM configuration was based on the UCB W205 Spring 2016 image.  Our particular instance was configured as:
 
-|Family         |Type    |VCPUs|Memory (GiB)|Instance Storage|EBS Optimized Available|Network Performance|IPv6 Support|
-|---------------|--------|-----|------------|----------------|-----------------------|--------------------------------|
-|General Purpose|m1.large|2    |7.5         |2x420           |Yes                    |Moderate           |No          |
-|---------------|--------|-----|------------|----------------|-----------------------|--------------------------------|
+| Family          | Type     | VCPUs | Memory (GiB) | Instance Storage | EBS Optimized Available | Network Performance | IPv6 Support |
+| --------------- | -------- | ----- | ------------ | ---------------- | ----------------------- | ------------------- | ------------ |
+| General Purpose | m1.large | 2     | 7.5          | 2x420            | Yes                     | Moderate           | No            |
+| --------------- | -------- | ----- | ------------ | ---------------- | ----------------------- | ------------------- | ------------ |
 
 ## Methodology
 
