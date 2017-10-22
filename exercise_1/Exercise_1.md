@@ -33,7 +33,7 @@ corrected/transformed in the data:
 cases, we were able to locate the correct data using denormalized fields in each CSV.
 - Many data were of a type not useful for comparison/manipulation.  For example, survey responses were noted as "0 out of 9" for example.
 - Data was highly denormalized.
-	
+
 So, exploring this data and looking at the questions asked, we derived the following ERD:
 
 ![HospitalComparison](loading_and_modelling/HospitalCompare.png)
@@ -76,7 +76,6 @@ National Average" marks for each hospital and added a bonus multiplier to the sc
 "Worse than National Average Marks".  This bonus became a multiplier for the hopital rank to try
 and balance procedural metrics against a very important set of data.  The resulting list is given below:
 
-| -------------------------------------------------- | ---------------------- | ----------------- | ----- | ------- | --------------------- | ------------------------ | ------------------- |
 | HospitalName                                       | Address                | City              | State | ZIPCode | ConditionScoreAverage | ReAdmissionAndDeathScore | FinalScore          |
 | -------------------------------------------------- | ---------------------- | ----------------- | ----- | ------- | --------------------- | ------------------------ | ------------------- |
 | SARASOTA MEMORIAL HOSPITAL                         | 1700 S TAMIAMI TRL     | SARASOTA          | FL    | 34239   | 0.7265794562085376    | 0.5714285714285714       | 0.4151882606905929  |
@@ -89,7 +88,6 @@ and balance procedural metrics against a very important set of data.  The result
 | EISENHOWER MEDICAL CENTER                          | 39-000 BOB HOPE DRIVE  | RANCHO MIRAGE     | CA    | 92270   | 0.7206220060326444    | 0.2857142857142857       | 0.20589200172361266 |
 | CEDARS-SINAI MEDICAL CENTER                        | 8700 BEVERLY BLVD      | LOS ANGELES       | CA    | 90048   | 0.7104983289236992    | 0.2857142857142857       | 0.20299952254962833 |
 | JOHN MUIR MEDICAL CENTER - WALNUT CREEK CAMPUS     | 1601 YGNACIO VALLEY RD | WALNUT CREEK      | CA    | 94598   | 0.7088908622565122    | 0.2857142857142857       | 0.20254024635900347 |
-| -------------------------------------------------- | ---------------------- | ----------------- | ----- | ------- | --------------------- | ------------------------ | ------------------- |
 
 Code and results can be found in: [investigations/best_hospitals](investigations/best_hospitals)
 
@@ -98,7 +96,6 @@ Code and results can be found in: [investigations/best_hospitals](investigations
 We treated this as a variation of the first question, but grouped the data by the hospitals'
 state.  Results are below:
 
-| ----- | --------------------- | ------------------------ | ------------------- |
 | State | ConditionScoreAverage | ReAdmissionAndDeathScore | FinalScore          |
 | ----- | --------------------- | ------------------------ | ------------------- |
 | DE    | 0.680023554613072     | 0.02040816326530612      | 0.35021585893918905 |
@@ -111,7 +108,6 @@ state.  Results are below:
 | SC    | 0.5453842200795497    | -0.0045351473922902496   | 0.27042453634362973 |
 | NC    | 0.545566839306083     | -0.009652509652509652    | 0.26795716482678666 |
 | PA    | 0.5401853448084121    | -0.006229235880398671    | 0.2669780544640067  |
-| ----- | --------------------- | ------------------------ | ------------------- |
 
 Code and results can be found in: [investigations/best_states](investigations/best_states)
 
@@ -122,20 +118,18 @@ We looked for high variability in the metrics by finding the mean and standard d
 sample of procedure (in the effective care data), then looked for results with a large average
 number of standard deviations away from the mean.  The top 10 items are listed below:
 
-| ------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------- | ---------------------- | ------------------- |
-| Name                                                                                                                                                          | ScoreAverage          | ScoreStandardDeviation | Variability         |
-| ------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------- | ---------------------- | ------------------- |
-| Aspirin Prescribed at Discharge                                                                                                                               | 0.4676739690721657    | 0.49334403774660446    | 0.9974000793322696  |
-| Aspirin at Arrival                                                                                                                                            | 0.49028946728290457   | 0.4842554302288592     | 0.99694475119496    |
-| Statin Prescribed at Discharge                                                                                                                                | 0.4586168384879751    | 0.48860021949759497    | 0.9954116214449141  |
-| Venous Thromboembolism Patients Receiving Unfractionated Heparin with Dosages/Platelet Count Monitoring by Protocol or Nomogram                               | 0.4339819587628876    | 0.49177290216458586    | 0.9908769545720522  |
-| Discharged on Antithrombotic Therapy                                                                                                                          | 0.5660674398625414    | 0.48844876282520633    | 0.987372549309221   |
-| Antithrombotic Therapy By End of Hospital Day 2                                                                                                               | 0.5616967353951875    | 0.4850840425178857     | 0.9871621682472559  |
-| Discharged on Statin Medication                                                                                                                               | 0.5205111683848813    | 0.47245519783849815    | 0.9858287403753931  |
-| Stroke Education                                                                                                                                              | 0.46125429553265074   | 0.463537003798493      | 0.9848703820782595  |
-| Assessed for Rehabilitation                                                                                                                                   | 0.5641666666666648    | 0.4817030138249755     | 0.9842916202914996  |
-| ACEI or ARB for LVSD                                                                                                                                          | 0.5577920962199308    | 0.47896323249479267    | 0.983542639514377   |
-| ------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------- | ---------------------- | ------------------- |
+| Name                                                                                                                            | ScoreAverage          | ScoreStandardDeviation | Variability         |
+| ------------------------------------------------------------------------------------------------------------------------------- | --------------------- | ---------------------- | ------------------- |
+| Aspirin Prescribed at Discharge                                                                                                 | 0.4676739690721657    | 0.49334403774660446    | 0.9974000793322696  |
+| Aspirin at Arrival                                                                                                              | 0.49028946728290457   | 0.4842554302288592     | 0.99694475119496    |
+| Statin Prescribed at Discharge                                                                                                  | 0.4586168384879751    | 0.48860021949759497    | 0.9954116214449141  |
+| Venous Thromboembolism Patients Receiving Unfractionated Heparin with Dosages/Platelet Count Monitoring by Protocol or Nomogram | 0.4339819587628876    | 0.49177290216458586    | 0.9908769545720522  |
+| Discharged on Antithrombotic Therapy                                                                                            | 0.5660674398625414    | 0.48844876282520633    | 0.987372549309221   |
+| Antithrombotic Therapy By End of Hospital Day 2                                                                                 | 0.5616967353951875    | 0.4850840425178857     | 0.9871621682472559  |
+| Discharged on Statin Medication                                                                                                 | 0.5205111683848813    | 0.47245519783849815    | 0.9858287403753931  |
+| Stroke Education                                                                                                                | 0.46125429553265074   | 0.463537003798493      | 0.9848703820782595  |
+| Assessed for Rehabilitation                                                                                                     | 0.5641666666666648    | 0.4817030138249755     | 0.9842916202914996  |
+| ACEI or ARB for LVSD                                                                                                            | 0.5577920962199308    | 0.47896323249479267    | 0.983542639514377   |
 
 The code and complete list of results are in [investigations/hospital_variability](investigations/hospital_variability)
 
@@ -144,9 +138,9 @@ The code and complete list of results are in [investigations/hospital_variabilit
 Our response to this question is no.  We ran our hospitals rating against the overall survey
 responses and we found a weak, negative correlation of -0.280270124681.
 This is not surprising to us, as what may be important to survey respondents may not be related
-in any way to the measures that would be taken by health care professionals. 
+in any way to the measures that would be taken by health care professionals.
 
-The code and a complete write up can be found in [invetigations/hospitals_and_patients](investigations/hospitals_and_patients)
+The code and a complete write up can be found in [investigations/hospitals_and_patients](investigations/hospitals_and_patients)
 
 # Conclusions
 
