@@ -70,7 +70,22 @@ def DropExistingTables():
 #	Normalize hospitals - this is a base table, so there's not much to be done;  only conversion is the emergency services field to a boolean
 #
 def TransformHospitals():
-	hospitals_revised = sqlContext.sql('SELECT ProviderID,HospitalName,Address,City,State,ZIPCode,CountyName,PhoneNumber,HospitalType,HospitalOwnership,case when EmergencyServices = "Yes" then 1 else 0 end as HasEmergencyServices FROM hospitals_tmp')
+	hospitals_revised = sqlContext.sql("""
+		SELECT
+			ProviderID,
+			HospitalName,
+			Address,
+			City,
+			State,
+			ZIPCode,
+			CountyName,
+			PhoneNumber,
+			HospitalType,
+			HospitalOwnership,
+			case when EmergencyServices = 'Yes' then 1 else 0 end as HasEmergencyServices
+		FROM
+			hospitals_tmp
+	""")
 	hospitals_revised = hospitals_revised.withColumn('HasEmergencyServices', (when(hospitals_revised.HasEmergencyServices == 'Yes', True).otherwise(False)).cast(BooleanType()))
 	hospitals_revised.saveAsTable("hospitals")
 	return
@@ -89,7 +104,17 @@ def TransformEffectiveCare():
 	#			c. otherwise, we'll assume it's castable to a double
 	#		3) Transform sample-size to a double, again interpreting "Not Available" as null
 	#
-	effective_care_revised = sqlContext.sql('SELECT ProviderID,Condition,MeasureID,Score,Sample,Footnote FROM effective_care_tmp')
+	effective_care_revised = sqlContext.sql("""
+		SELECT
+			ProviderID,
+			Condition,
+			MeasureID,
+			Score,
+			Sample,
+			Footnote
+		FROM
+			effective_care_tmp
+	""")
 	measure_id_udf = udf(lambda orig_id: 'IMM_3' if orig_id == 'IMM_3_FAC_ADHPCT' else orig_id.upper(), StringType())
 	effective_care_revised = effective_care_revised.withColumn('MeasureID', measure_id_udf(effective_care_revised.MeasureID))
 	effective_care_revised = effective_care_revised.withColumn('Score', (
@@ -111,7 +136,19 @@ def TransformReadmissions():
 	#	Transforms:
 	#		1) Transform Denominator (sample-size), Score, LowerEstimate, and HigherEstimate to doubles, interpreting "Not Available" as null
 	#
-	readmissions_revised = sqlContext.sql('SELECT ProviderID,UPPER(MeasureID) as MeasureID,ComparedToNational,Denominator,Score,LowerEstimate,HigherEstimate,Footnote FROM readmissions_tmp')
+	readmissions_revised = sqlContext.sql("""
+		SELECT
+			ProviderID,
+			UPPER(MeasureID) as MeasureID,
+			ComparedToNational,
+			Denominator,
+			Score,
+			LowerEstimate,
+			HigherEstimate,
+			Footnote
+		FROM
+			readmissions_tmp
+	""")
 	readmissions_revised = readmissions_revised.withColumn('Denominator', (when(readmissions_revised.Denominator == 'Not Available', lit(None)).otherwise(readmissions_revised.Denominator)).cast(IntegerType()))
 	readmissions_revised = readmissions_revised.withColumn('Score', (when(readmissions_revised.Score == 'Not Available', lit(None)).otherwise(readmissions_revised.Score)).cast(DoubleType()))
 	readmissions_revised = readmissions_revised.withColumn('LowerEstimate', (when(readmissions_revised.LowerEstimate == 'Not Available', lit(None)).otherwise(readmissions_revised.LowerEstimate)).cast(DoubleType()))
@@ -136,15 +173,41 @@ def TransformMeasures():
 	#		2) Add the aggregated MinScore and MaxScore values to the raw CSV data
 	#		3) Convert the Date columns from strings to a date using a UDF
 	#
-	effective_care_min_max = sqlContext.sql('select MeasureID, min(coalesce(Score, 0.0)) as MinScore, max(coalesce(Score, 0.0)) as MaxScore from effective_care group by MeasureID')
-	readmissions_min_max = sqlContext.sql('select MeasureID, min(coalesce(Score, 0.0)) as MinScore, max(coalesce(Score, 0.0)) as MaxScore from readmissions group by MeasureID')
-	effective_care_min_max.registerTempTable('effective_care_min_max')
-	readmissions_min_max = sqlContext.sql('select MeasureID, min(coalesce(Score, 0.0)) as MinScore, max(coalesce(Score, 0.0)) as MaxScore from effective_care group by MeasureID')
-	readmissions_min_max.registerTempTable('readmissions_min_max')
-	min_maxes = sqlContext.sql('SELECT * from effective_care_min_max UNION DISTINCT SELECT * FROM readmissions_min_max')
+	min_maxes = sqlContext.sql("""
+		SELECT
+			UPPER(MeasureID) as MeasureID,
+			min(coalesce(Score, 0.0)) as MinScore,
+			max(coalesce(Score, 0.0)) as MaxScore
+		FROM
+			effective_care
+		GROUP BY
+			MeasureID
+		UNION
+		SELECT
+			UPPER(MeasureID) as MeasureID,
+			min(coalesce(Score, 0.0)) as MinScore,
+			max(coalesce(Score, 0.0)) as MaxScore
+		FROM
+			readmissions
+		GROUP BY
+			MeasureID
+	""")
 	min_maxes.registerTempTable('min_maxes')
 	date_convert_udf = udf(lambda str: datetime.strptime(str, '%Y-%m-%d %H:%M:%S').date(), DateType())
-	measures_revised = sqlContext.sql('SELECT UPPER(m.MeasureID) as MeasureID,m.MeasureName as Name,m.MeasureStartQuarter as StartQuarter,m.MeasureStartDate as StartDate,m.MeasureEndQuarter as EndQuarter,m.MeasureEndDate as EndDate,x.MinScore as MinScore,x.MaxScore as MaxScore FROM Measures_tmp m left outer join min_maxes x on x.MeasureID = m.MeasureID')
+	measures_revised = sqlContext.sql("""
+		SELECT
+			UPPER(m.MeasureID) as MeasureID,
+			m.MeasureName as Name,
+			m.MeasureStartQuarter as StartQuarter,
+			m.MeasureStartDate as StartDate,
+			m.MeasureEndQuarter as EndQuarter,
+			m.MeasureEndDate as EndDate,
+			x.MinScore as MinScore,
+			x.MaxScore as MaxScore
+		FROM
+			Measures_tmp m 
+			LEFT OUTER JOIN min_maxes x on UPPER(x.MeasureID) = UPPER(m.MeasureID)
+	""")
 	measures_revised = measures_revised.withColumn('StartDate', date_convert_udf(measures_revised.StartDate))
 	measures_revised = measures_revised.withColumn('EndDate', date_convert_udf(measures_revised.EndDate))
 	measures_revised.saveAsTable("measures")
@@ -170,7 +233,20 @@ def TransformSurveysResponses():
 	#		6) Convert the HCAHPS scores to doubles
 	#
 	convert_response_udf = udf(lambda str: (float(str.split()[0]) / float(str.split()[3])) if len(str.split()) == 4 and str.split()[0].isnumeric() and str.split()[3].isnumeric() and float(str.split()[3]) <> 0.0 else 0.0, DoubleType())
-	achievement_points = sqlContext.sql('SELECT ProviderID,CommunicationWithNursesAchievementPoints,CommunicationWithDoctorsAchievementPoints,ResponsivenessOfHospitalStaffAchievementPoints,PainManagementAchievementPoints,CommunicationAboutMedicinesAchievementPoints,CleanlinessandQuietnessOfHospitalEnvironmentAchievementPoints,DischargeInformationAchievementPoints,OverallRatingOfHospitalAchievementPoints FROM surveys_responses_tmp')
+	achievement_points = sqlContext.sql("""
+		SELECT
+			ProviderID,
+			CommunicationWithNursesAchievementPoints,
+			CommunicationWithDoctorsAchievementPoints,
+			ResponsivenessOfHospitalStaffAchievementPoints,
+			PainManagementAchievementPoints,
+			CommunicationAboutMedicinesAchievementPoints,
+			CleanlinessandQuietnessOfHospitalEnvironmentAchievementPoints,
+			DischargeInformationAchievementPoints,
+			OverallRatingOfHospitalAchievementPoints
+		FROM
+			surveys_responses_tmp
+	""")
 	achievement_points = achievement_points.withColumn('CommunicationWithNursesAchievementPoints', convert_response_udf(achievement_points.CommunicationWithNursesAchievementPoints))
 	achievement_points = achievement_points.withColumn('CommunicationWithDoctorsAchievementPoints', convert_response_udf(achievement_points.CommunicationWithDoctorsAchievementPoints))
 	achievement_points = achievement_points.withColumn('ResponsivenessOfHospitalStaffAchievementPoints', convert_response_udf(achievement_points.ResponsivenessOfHospitalStaffAchievementPoints))
@@ -181,7 +257,20 @@ def TransformSurveysResponses():
 	achievement_points = achievement_points.withColumn('OverallRatingOfHospitalAchievementPoints', convert_response_udf(achievement_points.OverallRatingOfHospitalAchievementPoints))
 	achievement_points.registerTempTable('achievement_points')
 
-	improvement_points = sqlContext.sql('SELECT ProviderID,CommunicationWithNursesImprovementPoints,CommunicationWithDoctorsImprovementPoints,ResponsivenessOfHospitalStaffImprovementPoints,PainManagementImprovementPoints,CommunicationAboutMedicinesImprovementPoints,CleanlinessandQuietnessOfHospitalEnvironmentImprovementPoints,DischargeInformationImprovementPoints,OverallRatingOfHospitalImprovementPoints FROM surveys_responses_tmp')
+	improvement_points = sqlContext.sql("""
+		SELECT
+			ProviderID,
+			CommunicationWithNursesImprovementPoints,
+			CommunicationWithDoctorsImprovementPoints,
+			ResponsivenessOfHospitalStaffImprovementPoints,
+			PainManagementImprovementPoints,
+			CommunicationAboutMedicinesImprovementPoints,
+			CleanlinessandQuietnessOfHospitalEnvironmentImprovementPoints,
+			DischargeInformationImprovementPoints,
+			OverallRatingOfHospitalImprovementPoints
+		FROM
+			surveys_responses_tmp
+	""")
 	improvement_points = improvement_points.withColumn('CommunicationWithNursesImprovementPoints', convert_response_udf(improvement_points.CommunicationWithNursesImprovementPoints))
 	improvement_points = improvement_points.withColumn('CommunicationWithDoctorsImprovementPoints', convert_response_udf(improvement_points.CommunicationWithDoctorsImprovementPoints))
 	improvement_points = improvement_points.withColumn('ResponsivenessOfHospitalStaffImprovementPoints', convert_response_udf(improvement_points.ResponsivenessOfHospitalStaffImprovementPoints))
@@ -192,7 +281,20 @@ def TransformSurveysResponses():
 	improvement_points = improvement_points.withColumn('OverallRatingOfHospitalImprovementPoints', convert_response_udf(improvement_points.OverallRatingOfHospitalImprovementPoints))
 	improvement_points.registerTempTable('improvement_points')
 
-	dimension_score = sqlContext.sql('SELECT ProviderID,CommunicationWithNursesDimensionScore,CommunicationWithDoctorsDimensionScore,ResponsivenessOfHospitalStaffDimensionScore,PainManagementDimensionScore,CommunicationAboutMedicinesDimensionScore,CleanlinessandQuietnessOfHospitalEnvironmentDimensionScore,DischargeInformationDimensionScore,OverallRatingOfHospitalDimensionScore FROM surveys_responses_tmp')
+	dimension_score = sqlContext.sql("""
+		SELECT
+			ProviderID,
+			CommunicationWithNursesDimensionScore,
+			CommunicationWithDoctorsDimensionScore,
+			ResponsivenessOfHospitalStaffDimensionScore,
+			PainManagementDimensionScore,
+			CommunicationAboutMedicinesDimensionScore,
+			CleanlinessandQuietnessOfHospitalEnvironmentDimensionScore,
+			DischargeInformationDimensionScore,
+			OverallRatingOfHospitalDimensionScore
+		FROM
+			surveys_responses_tmp
+	""")
 	dimension_score = dimension_score.withColumn('CommunicationWithNursesDimensionScore', convert_response_udf(dimension_score.CommunicationWithNursesDimensionScore))
 	dimension_score = dimension_score.withColumn('CommunicationWithDoctorsDimensionScore', convert_response_udf(dimension_score.CommunicationWithDoctorsDimensionScore))
 	dimension_score = dimension_score.withColumn('ResponsivenessOfHospitalStaffDimensionScore', convert_response_udf(dimension_score.ResponsivenessOfHospitalStaffDimensionScore))
@@ -203,7 +305,41 @@ def TransformSurveysResponses():
 	dimension_score = dimension_score.withColumn('OverallRatingOfHospitalDimensionScore', convert_response_udf(dimension_score.OverallRatingOfHospitalDimensionScore))
 	dimension_score.registerTempTable('dimension_score')
 
-	surveys_responses_revised = sqlContext.sql('SELECT CASE WHEN s.ProviderID = "330249" THEN "331316" ELSE s.ProviderID END as ProviderID,a.CommunicationWithNursesAchievementPoints,i.CommunicationWithNursesImprovementPoints,d.CommunicationWithNursesDimensionScore,a.CommunicationWithDoctorsAchievementPoints,i.CommunicationWithDoctorsImprovementPoints,d.CommunicationWithDoctorsDimensionScore,a.ResponsivenessOfHospitalStaffAchievementPoints,i.ResponsivenessOfHospitalStaffImprovementPoints,d.ResponsivenessOfHospitalStaffDimensionScore,a.PainManagementAchievementPoints,i.PainManagementImprovementPoints,d.PainManagementDimensionScore,a.CommunicationAboutMedicinesAchievementPoints,i.CommunicationAboutMedicinesImprovementPoints,d.CommunicationAboutMedicinesDimensionScore,a.CleanlinessandQuietnessOfHospitalEnvironmentAchievementPoints,i.CleanlinessandQuietnessOfHospitalEnvironmentImprovementPoints,d.CleanlinessandQuietnessOfHospitalEnvironmentDimensionScore,a.DischargeInformationAchievementPoints,i.DischargeInformationImprovementPoints,d.DischargeInformationDimensionScore,a.OverallRatingOfHospitalAchievementPoints,i.OverallRatingOfHospitalImprovementPoints,d.OverallRatingOfHospitalDimensionScore,s.HCAHPSBaseScore,s.HCAHPSConsistencyScore FROM surveys_responses_tmp s join achievement_points a on a.ProviderID = s.ProviderID join improvement_points i on i.ProviderID = s.ProviderID join dimension_score d on d.ProviderID = s.ProviderID')
+	surveys_responses_revised = sqlContext.sql("""
+		SELECT
+			CASE WHEN s.ProviderID = "330249" THEN "331316" ELSE s.ProviderID END as ProviderID,
+			a.CommunicationWithNursesAchievementPoints,
+			i.CommunicationWithNursesImprovementPoints,
+			d.CommunicationWithNursesDimensionScore,
+			a.CommunicationWithDoctorsAchievementPoints,
+			i.CommunicationWithDoctorsImprovementPoints,
+			d.CommunicationWithDoctorsDimensionScore,
+			a.ResponsivenessOfHospitalStaffAchievementPoints,
+			i.ResponsivenessOfHospitalStaffImprovementPoints,
+			d.ResponsivenessOfHospitalStaffDimensionScore,
+			a.PainManagementAchievementPoints,
+			i.PainManagementImprovementPoints,
+			d.PainManagementDimensionScore,
+			a.CommunicationAboutMedicinesAchievementPoints,
+			i.CommunicationAboutMedicinesImprovementPoints,
+			d.CommunicationAboutMedicinesDimensionScore,
+			a.CleanlinessandQuietnessOfHospitalEnvironmentAchievementPoints,
+			i.CleanlinessandQuietnessOfHospitalEnvironmentImprovementPoints,
+			d.CleanlinessandQuietnessOfHospitalEnvironmentDimensionScore,
+			a.DischargeInformationAchievementPoints,
+			i.DischargeInformationImprovementPoints,
+			d.DischargeInformationDimensionScore,
+			a.OverallRatingOfHospitalAchievementPoints,
+			i.OverallRatingOfHospitalImprovementPoints,
+			d.OverallRatingOfHospitalDimensionScore,
+			s.HCAHPSBaseScore,
+			s.HCAHPSConsistencyScore
+		FROM
+			surveys_responses_tmp s
+			JOIN achievement_points a on a.ProviderID = s.ProviderID
+			JOIN improvement_points i on i.ProviderID = s.ProviderID
+			JOIN dimension_score d on d.ProviderID = s.ProviderID
+	""")
 	surveys_responses_revised = surveys_responses_revised.withColumn('HCAHPSBaseScore', (when(surveys_responses_revised.HCAHPSBaseScore == 'Not Available', lit(None)).otherwise(surveys_responses_revised.HCAHPSBaseScore)).cast(DoubleType()))
 	surveys_responses_revised = surveys_responses_revised.withColumn('HCAHPSConsistencyScore', (when(surveys_responses_revised.HCAHPSConsistencyScore == 'Not Available', lit(None)).otherwise(surveys_responses_revised.HCAHPSConsistencyScore)).cast(DoubleType()))
 	surveys_responses_revised.saveAsTable('surveys_responses')
@@ -236,11 +372,56 @@ def CheckAllRowCounts():
 #	
 def CheckForeignKeys():
 	print 'Checking foreign keys'
-	ExecSQL('SELECT distinct m.MeasureID as Measure_MeasureID, e.MeasureID as effective_care_MeasureID FROM effective_care e LEFT OUTER JOIN Measures m on m.MeasureID = e.MeasureID WHERE m.MeasureID IS NULL')
-	ExecSQL('SELECT distinct m.MeasureID as Measure_MeasureID, r.MeasureID as readmissions_MeasureID FROM readmissions r LEFT OUTER JOIN Measures m on m.MeasureID = r.MeasureID WHERE m.MeasureID IS NULL')
-	ExecSQL('SELECT distinct h.ProviderID as hospitals_ProviderID, e.ProviderID as effective_care_ProviderID FROM effective_care e LEFT OUTER JOIN hospitals h on h.ProviderID = e.ProviderID WHERE h.ProviderID IS NULL')
-	ExecSQL('SELECT distinct h.ProviderID as hospitals_ProviderID, r.ProviderID as readmissions_ProviderID FROM readmissions r LEFT OUTER JOIN hospitals h on h.ProviderID = r.ProviderID WHERE h.ProviderID IS NULL')
-	ExecSQL('SELECT distinct h.ProviderID as hospitals_ProviderID, s.ProviderID as surveys_responses_ProviderID FROM surveys_responses s LEFT OUTER JOIN hospitals h on h.ProviderID = s.ProviderID WHERE h.ProviderID IS NULL')
+	ExecSQL("""
+		SELECT DISTINCT
+			m.MeasureID as Measure_MeasureID,
+			e.MeasureID as effective_care_MeasureID
+		FROM
+			effective_care e
+			LEFT OUTER JOIN measures m on m.MeasureID = e.MeasureID
+		WHERE
+			m.MeasureID IS NULL
+	""")
+	ExecSQL("""
+		SELECT DISTINCT
+			m.MeasureID as Measure_MeasureID,
+			r.MeasureID as readmissions_MeasureID
+		FROM
+			readmissions r
+			LEFT OUTER JOIN measures m on m.MeasureID = r.MeasureID
+		WHERE
+			m.MeasureID IS NULL
+	""")
+	ExecSQL("""
+		SELECT DISTINCT
+			h.ProviderID as hospitals_ProviderID,
+			e.ProviderID as effective_care_ProviderID
+		FROM
+			effective_care e
+			LEFT OUTER JOIN hospitals h on h.ProviderID = e.ProviderID
+		WHERE
+			h.ProviderID IS NULL
+	""")
+	ExecSQL("""
+		SELECT DISTINCT
+			h.ProviderID as hospitals_ProviderID,
+			r.ProviderID as readmissions_ProviderID
+		FROM
+			readmissions r
+			LEFT OUTER JOIN hospitals h on h.ProviderID = r.ProviderID
+		WHERE
+			h.ProviderID IS NULL
+	""")
+	ExecSQL("""
+		SELECT DISTINCT
+			h.ProviderID as hospitals_ProviderID,
+			s.ProviderID as surveys_responses_ProviderID
+		FROM
+			surveys_responses s
+			LEFT OUTER JOIN hospitals h on h.ProviderID = s.ProviderID
+		WHERE
+			h.ProviderID IS NULL
+	""")
 	return
 
 #

@@ -1,0 +1,9 @@
+Exercise 1
+
+Correlation between Survey Response Data and Hospital Ratings
+Aaron Garth Enright
+W205 Section 1 (Monday 4pm)
+
+When we ran the correlation between the HCAHPS survey data and the hospital rating we derived earlier, we found a weak, negative correlation of -0.280270124681.  This is not surprising to us,
+as what may be important to survey respondents may not be related in any way to the measures that would be taken by health care professionals.  In extremis, consider that the most dissatisfied
+patients with a health care provider might not be able to answer surveys questions.

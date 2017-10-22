@@ -1,0 +1,64 @@
+Exercise 1
+
+Hospital Variability
+Aaron Garth Enright
+W205 Section 1 (Monday 4pm)
+
+We list out the procedures that have the greatest variability within the data.  We measure this by looking for the largest average standard deviation away from the mean for each measure from the
+normalized scores of the procedures outlined in the effective care data.
+
++-------------------------------------------------------------------------------------------------------------------------------------------------------------+---------------------+----------------------+-------------------+
+|Name                                                                                                                                                         |ScoreAverage         |ScoreStandardDeviation|Variability        |
++-------------------------------------------------------------------------------------------------------------------------------------------------------------+---------------------+----------------------+-------------------+
+|Aspirin Prescribed at Discharge                                                                                                                              |0.4676739690721657   |0.49334403774660446   |0.9974000793322696 |
+|Aspirin at Arrival                                                                                                                                           |0.49028946728290457  |0.4842554302288592    |0.99694475119496   |
+|Statin Prescribed at Discharge                                                                                                                               |0.4586168384879751   |0.48860021949759497   |0.9954116214449141 |
+|Venous Thromboembolism Patients Receiving Unfractionated Heparin with Dosages/Platelet Count Monitoring by Protocol or Nomogram                              |0.4339819587628876   |0.49177290216458586   |0.9908769545720522 |
+|Discharged on Antithrombotic Therapy                                                                                                                         |0.5660674398625414   |0.48844876282520633   |0.987372549309221  |
+|Antithrombotic Therapy By End of Hospital Day 2                                                                                                              |0.5616967353951875   |0.4850840425178857    |0.9871621682472559 |
+|Discharged on Statin Medication                                                                                                                              |0.5205111683848813   |0.47245519783849815   |0.9858287403753931 |
+|Stroke Education                                                                                                                                             |0.46125429553265074  |0.463537003798493     |0.9848703820782595 |
+|Assessed for Rehabilitation                                                                                                                                  |0.5641666666666648   |0.4817030138249755    |0.9842916202914996 |
+|ACEI or ARB for LVSD                                                                                                                                         |0.5577920962199308   |0.47896323249479267   |0.983542639514377  |
+|Venous Thromboembolism Patients with Anticoagulation Overlap Therapy                                                                                         |0.5401653780068749   |0.470564608559558     |0.9823070587898364 |
+|Venous Thromboembolism (VTE) Prophylaxis                                                                                                                     |0.5503178694158082   |0.47132188021202176   |0.9797575093707268 |
+|Venous Thromboembolism Warfarin Therapy Discharge Instructions                                                                                               |0.47113616838488276  |0.45921125454798256   |0.9785675755387849 |
+|Discharge Instructions                                                                                                                                       |0.5898883161512017   |0.46156547219351257   |0.9593169862021965 |
+|Intensive Care Unit Venous Thromboembolism Prophylaxis                                                                                                       |0.6017289518900317   |0.46040607121983457   |0.9576985109725509 |
+|Surgery Patients on Beta-Blocker Therapy Prior to Arrival Who Received a Beta-Blocker During the Perioperative Period                                        |0.6387920585161876   |0.46271648453140307   |0.946431015706064  |
+|Anticoagulation Therapy for Atrial Fibrillation/Flutter                                                                                                      |0.3103844501718234   |0.45182272410689045   |0.9315871552248722 |
+|Primary PCI Received Within 90 Minutes of Hospital Arrival                                                                                                   |0.30479832810867596  |0.4466048937430966    |0.9290838586544473 |
+|Urinary  Catheter Removed on Postoperative Day 1 (POD 1) or Postoperative Day 2 (POD 2) with Day of Surgery being Day Zero                                   |0.6767669801462785   |0.4494033860375313    |0.9174352944898798 |
+|Surgery Patients with Perioperative Temperature Management                                                                                                   |0.6971176975944992   |0.4568228749397723    |0.9161163634367151 |
+|Timing of Antibiotic Prophylaxis                                                                                                                             |0.687749939187537    |0.44414187057858356   |0.908205878709642  |
+|Prophylactic Antibiotic Selection for Surgical Patients                                                                                                      |0.691911943566032    |0.44468240387070496   |0.9070626644770556 |
+|Prophylactic Antibiotics Discontinued Within 24 hours After Surgery End Time                                                                                 |0.7043092998954905   |0.43833048472865344   |0.8944429342119466 |
+|Prophylactic Antibiotic Selection for Surgical Patients                                                                                                      |0.7104681295715578   |0.43948443989886693   |0.8925952435698016 |
+|Prophylactic Antibiotic Received Within 1 Hour Prior to Surgical Incision                                                                                    |0.7117554858933997   |0.4395039128712658    |0.8919594766268529 |
+|Surgery Patients Who Received Appropriate Venous Thromboembolism Prophylaxis Within 24 Hours Prior to Surgery to 24 Hours After Surgery                      |0.7270156739811766   |0.4379175055374042    |0.8829612729524919 |
+|Venous Thromboembolism Prophylaxis                                                                                                                           |0.6763960481099603   |0.40363748942706057   |0.8717416660529186 |
+|Emergency Department Volume                                                                                                                                  |0.38042316734344944  |0.3425688886900334    |0.8689970484325745 |
+|Influenza Immunization                                                                                                                                       |0.7179573043114138   |0.39294155916366724   |0.8362642818683924 |
+|Evaluation of LVS Function                                                                                                                                   |0.7647836990595547   |0.4048181606382735    |0.8294191072973791 |
+|Healthcare Personnel Influenza Vaccination                                                                                                                   |0.8028633931012807   |0.16681681519718008   |0.8057226138946131 |
+|Median Time to Pain Management for Long Bone Fracture                                                                                                        |0.23468528552449727  |0.15368988395953923   |0.8016142862587614 |
+|Head CT Scan Results for Acute Ischemic Stroke or Hemorrhagic Stroke Patients who Received Head CT or MRI Scan Interpretation Within 45 Minutes of ED Arrival|0.15562636828022355  |0.301223388168293     |0.7945704615217923 |
+|Median Time from ED Arrival to ED Departure for Admitted ED Patients                                                                                         |0.17381800046595589  |0.12028995771473656   |0.7794106374650556 |
+|Initial Antibiotic Selection for CAP in Immunocompetent Patient                                                                                              |0.7823113897596523   |0.3636298587799033    |0.7687599846913881 |
+|Median Time from ED Arrival to ED Departure for Discharged ED Patients                                                                                       |0.26253848481171155  |0.15019769667358104   |0.7602648635492543 |
+|Thrombolytic Therapy                                                                                                                                         |0.15561640893470816  |0.33739865186537854   |0.7532837136576132 |
+|Median Time from ED Arrival to Provider Contact for ED patients                                                                                              |0.16021657739001455  |0.13101323650910132   |0.747759086128081  |
+|Median Time to ECG                                                                                                                                           |0.02996255323231056  |0.04249300133080304   |0.7417347235625515 |
+|Admit Decision Time to ED Departure Time for Admitted Patients                                                                                               |0.06534768769807987  |0.06067510457075752   |0.7335332379372644 |
+|Patient left without being seen                                                                                                                              |0.060248557086307886 |0.07597975398259785   |0.7047889750226541 |
+|Home Management Plan of Care (HMPC) Document Given to Patient/Caregiver                                                                                      |0.8411764705882354   |0.2438228789697798    |0.6184647166337296 |
+|Hospital Acquired Potentially-Preventable Venous Thromboembolism                                                                                             |0.026650452543439375 |0.07427219161912003   |0.5847563202767356 |
+|Elective Delivery                                                                                                                                            |0.02290807560137466  |0.05536551586642896   |0.5494592541001478 |
+|Median Time to Transfer to Another Facility for Acute Coronary Intervention- Reporting Rate                                                                  |0.027346342612415028 |0.09240679308747686   |0.5329841392255407 |
+|Systemic Corticosteroids for Inpatient Asthma                                                                                                                |0.9385436893203882   |0.23375536032269462   |0.4708556799116295 |
+|Relievers for Inpatient Asthma                                                                                                                               |0.9415533980582524   |0.23417592458128944   |0.46843219138554554|
+|Fibrinolytic Therapy Received Within 30 Minutes of ED Arrival                                                                                                |0.011620043784967162 |0.09255739803501624   |0.24693513489980726|
+|Median Time to Fibrinolysis                                                                                                                                  |0.0067197762101678426|0.05399786806120646   |0.24477353319757317|
+|Fibrinolytic Therapy Received within 30 Minutes of Hospital Arrival                                                                                          |4.2942414222527596E-4|0.01831483310665692   |0.04686419016640084|
++-------------------------------------------------------------------------------------------------------------------------------------------------------------+---------------------+----------------------+-------------------+
+

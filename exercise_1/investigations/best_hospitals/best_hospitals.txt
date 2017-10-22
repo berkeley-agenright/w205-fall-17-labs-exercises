@@ -1,0 +1,28 @@
+Exercise 1
+
+Best Hospitals
+Aaron Garth Enright
+W205 Section 1 (Monday 4pm)
+
+Below is the top 10 hospitals in our ranking system.  Our system looks at the average normalized
+score per hospitals for effective care, and weights it against the readmission and death metrics.
+So, if a hospital has a particularly high effective care score, but ranks below national average
+on readmissions and mortality, it will drop in our ranking.  Conversely, a hospital with above
+national average rankings in readmissions but poor effective care scores will not rank highly in
+our system.
+
++--------------------------------------------------+----------------------+-----------------+-----+-------+---------------------+------------------------+-------------------+
+|HospitalName                                      |Address               |City             |State|ZIPCode|ConditionScoreAverage|ReAdmissionAndDeathScore|FinalScore         |
++--------------------------------------------------+----------------------+-----------------+-----+-------+---------------------+------------------------+-------------------+
+|SARASOTA MEMORIAL HOSPITAL                        |1700 S TAMIAMI TRL    |SARASOTA         |FL   |34239  |0.7265794562085376   |0.5714285714285714      |0.4151882606905929 |
+|MEMORIAL HERMANN HOSPITAL SYSTEM                  |1635  NORTH LOOP WEST |HOUSTON          |TX   |77008  |0.7343301230665824   |0.42857142857142855     |0.3147129098856782 |
+|EVANSTON HOSPITAL                                 |2650 RIDGE AVE        |EVANSTON         |IL   |60201  |0.6950438882412874   |0.42857142857142855     |0.29787595210340884|
+|WILLIS KNIGHTON MEDICAL CENTER                    |2600 GREENWOOD ROAD   |SHREVEPORT       |LA   |71103  |0.6863969373370338   |0.42857142857142855     |0.2941701160015859 |
+|BAYSTATE MEDICAL CENTER                           |759 CHESTNUT STREET   |SPRINGFIELD      |MA   |01199  |0.7308459266688198   |0.35714285714285715     |0.26101640238172136|
+|MEMORIAL MISSION HOSPITAL AND ASHEVILLE SURGERY CE|509 BILTMORE AVE      |ASHEVILLE        |NC   |28801  |0.7210793949631527   |0.35714285714285715     |0.2575283553439831 |
+|ALEXIAN BROTHERS MEDICAL CENTER 1                 |800 W BIESTERFIELD RD |ELK GROVE VILLAGE|IL   |60007  |0.6794264685204503   |0.35714285714285715     |0.2426523101858751 |
+|EISENHOWER MEDICAL CENTER                         |39-000 BOB HOPE DRIVE |RANCHO MIRAGE    |CA   |92270  |0.7206220060326444   |0.2857142857142857      |0.20589200172361266|
+|CEDARS-SINAI MEDICAL CENTER                       |8700 BEVERLY BLVD     |LOS ANGELES      |CA   |90048  |0.7104983289236992   |0.2857142857142857      |0.20299952254962833|
+|JOHN MUIR MEDICAL CENTER - WALNUT CREEK CAMPUS    |1601 YGNACIO VALLEY RD|WALNUT CREEK     |CA   |94598  |0.7088908622565122   |0.2857142857142857      |0.20254024635900347|
++--------------------------------------------------+----------------------+-----------------+-----+-------+---------------------+------------------------+-------------------+
+only showing top 10 rows

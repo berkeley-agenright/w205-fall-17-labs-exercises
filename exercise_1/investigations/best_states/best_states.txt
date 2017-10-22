@@ -1,0 +1,28 @@
+Exercise 1
+
+Best States
+Aaron Garth Enright
+W205 Section 1 (Monday 4pm)
+
+Below is the top 10 states in our ranking system.  Our system looks at the average normalized
+score per state for effective care, and weights it against the readmission and death metrics.
+So, if a state has a particularly high effective care score, but ranks below national average
+on readmissions and mortality, it will drop in our ranking.  Conversely, a state with above
+national average rankings in readmissions but poor effective care scores will not rank highly in
+our system.
+
++-----+---------------------+------------------------+-------------------+
+|State|ConditionScoreAverage|ReAdmissionAndDeathScore|FinalScore         |
++-----+---------------------+------------------------+-------------------+
+|DE   |0.680023554613072    |0.02040816326530612     |0.35021585893918905|
+|NJ   |0.6617723332507028   |-0.024175824175824177   |0.3187982545374393 |
+|CT   |0.6020335210635446   |0.013824884792626729    |0.3079292029280857 |
+|RI   |0.6196759555670457   |-0.005952380952380952   |0.3068617873073324 |
+|MA   |0.5805611659627714   |0.020879120879120878    |0.30072014342094616|
+|FL   |0.5962207806059759   |-0.023425499231950846   |0.28639764068701257|
+|CA   |0.5573465511636649   |0.00835421888053467     |0.2828503850220998 |
+|SC   |0.5453842200795497   |-0.0045351473922902496  |0.27042453634362973|
+|NC   |0.545566839306083    |-0.009652509652509652   |0.26795716482678666|
+|PA   |0.5401853448084121   |-0.006229235880398671   |0.2669780544640067 |
++-----+---------------------+------------------------+-------------------+
+only showing top 10 rows
