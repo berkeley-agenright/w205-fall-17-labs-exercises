@@ -40,7 +40,7 @@ Now, clone this repository and do the following:
 This will begin gathering tweet data.   Analysis can be done usiong the following tools (all found in the w205-fall-17-labs-exercises/exercise_2 folder):
 
 	python finalresults.py [word1 word2 ...]		-- get the counts for words alphabetically;  if no word arguments are supplied, the counts for all words in the tweet-stream are returned
-	python histogram.py lower upper					-- produce the word counts between lower and upper counts ordered by count
-	python topcounts.py n							-- produce the top n word counts in descending order
+	python histogram.py lower upper				-- produce the word counts between lower and upper counts ordered by count
+	python topcounts.py n					-- produce the top n word counts in descending order
 
 	
